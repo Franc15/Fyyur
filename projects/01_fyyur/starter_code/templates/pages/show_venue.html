@@ -10,11 +10,12 @@ block content %}
       {% endfor %}
     </div>
     <p>
-      <i class="fas fa-globe-americas"></i> {{ venue.city }}, {{ venue.state }}
+      <i class="fas fa-globe-americas"></i> {{ venue.area.city.name }}, {{
+      venue.area.city.state.name }}
     </p>
     <p>
-      <i class="fas fa-map-marker"></i> {% if venue.address %}{{ venue.address
-      }}{% else %}No Address{% endif %}
+      <i class="fas fa-map-marker"></i> {% if venue.area.address %}{{
+      venue.area.address }}{% else %}No Address{% endif %}
     </p>
     <p>
       <i class="fas fa-phone-alt"></i> {% if venue.phone %}{{ venue.phone }}{%

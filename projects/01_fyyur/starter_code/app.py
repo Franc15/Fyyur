@@ -35,15 +35,16 @@ class Venue(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    address = db.Column(db.String(120))
+    # city = db.Column(db.String(120))
+    # state = db.Column(db.String(120))
+    # address = db.Column(db.String(120))
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
     genres = db.relationship('Genre', secondary='venue_genre', backref=db.backref('venues', lazy=True))
+    area_id = db.Column(db.Integer, db.ForeignKey('Area.id'), nullable=False)
     website = db.Column(db.String(120))
     seeking_description = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean)
@@ -78,6 +79,42 @@ artist_genre = db.Table('artist_genre',
     db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), primary_key=True),
     db.Column('genre_id', db.Integer, db.ForeignKey('Genre.id'), primary_key=True)
 )
+
+# area_state = db.Table('area_state',
+#     db.Column('area_id', db.Integer, db.ForeignKey('Area.id'), primary_key=True),
+#     db.Column('state_id', db.Integer, db.ForeignKey('State.id'), primary_key=True)
+# )
+
+class Area(db.Model):
+    __tablename__ = 'Area'
+    id = db.Column(db.Integer, primary_key=True)
+    address = db.Column(db.String(120), nullable=True)
+    # state = db.relationship('State', secondary='area_state', backref=db.backref('areas', lazy=True))
+    venue = db.relationship('Venue', backref='area', lazy=True)
+    city_id = db.Column(db.Integer, db.ForeignKey('City.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<Area {self.city}, {self.state.name}>'
+
+class City(db.Model):
+    __tablename__ = 'City'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=True)
+    state_id = db.Column(db.Integer, db.ForeignKey('State.id'), nullable=False)
+    area = db.relationship('Area', backref='city', lazy=True)
+    
+    def __repr__(self):
+        return f'<City {self.name}>'
+
+class State(db.Model):
+    __tablename__ = 'State'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=True)
+    city = db.relationship('City', backref='state', lazy=True)
+
+    def __repr__(self):
+        return f'<State {self.name}>'
+
 
 class Show(db.Model):
     __tablename__ = 'Show'
